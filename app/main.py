@@ -20,7 +20,7 @@ app = FastAPI(
 @app.get("/")
 async def root():
     return {
-        "message": "Healthcare Agent API Running",
+        "message": "CD Pipeline Successfully Working 🚀",
         "status": "healthy",
         "version": settings.API_VERSION
     }
