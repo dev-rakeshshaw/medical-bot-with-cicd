@@ -59,7 +59,10 @@ jobs:
 
       - name: Deploy To Windows Server
         run: |
-          ssh -o StrictHostKeyChecking=no \
+          ssh \
+          -o StrictHostKeyChecking=no \
+          -o BatchMode=yes \
+          -T \
           -i ~/.ssh/github_cd \
           Uttam@100.81.202.58 \
-          "powershell -ExecutionPolicy Bypass -File E:\Projects\Deployment\medical-bot-with-cicd\deploy.ps1"
+          "powershell -ExecutionPolicy Bypass -File 'E:\Projects\Deployment\medical-bot-with-cicd\deploy.ps1'; exit"
