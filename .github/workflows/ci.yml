@@ -37,3 +37,27 @@ jobs:
       - name: Run Pytest
         run: |
           pytest
+          
+  deploy:
+
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/github_cd
+          chmod 600 ~/.ssh/github_cd
+
+      - name: Add Server To Known Hosts
+        run: |
+          ssh-keyscan 100.81.202.58 >> ~/.ssh/known_hosts
+
+      - name: Deploy To Windows Server
+        run: |
+          ssh -i ~/.ssh/github_cd Uttam@100.81.202.58 '
+            powershell -ExecutionPolicy Bypass -File E:\Projects\Deployment\medical-bot-with-cicd\deploy.ps1
+          '
