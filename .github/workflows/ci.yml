@@ -37,7 +37,7 @@ jobs:
       - name: Run Pytest
         run: |
           pytest
-          
+
   deploy:
 
     needs: test
@@ -45,6 +45,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      
+      - name: Connect To Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
 
       - name: Setup SSH Key
         run: |
