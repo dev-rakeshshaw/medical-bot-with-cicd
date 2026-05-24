@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi import Response
 
 from app.routes.healthcare_routes import router
 from app.core.config import settings
@@ -25,6 +26,9 @@ async def root():
         "version": settings.API_VERSION
     }
 
+@app.head("/")
+async def health_check():
+    return Response(status_code=200)
 
 app.include_router(router)
 
