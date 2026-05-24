@@ -1,4 +1,4 @@
-name: Healthcare Agent CI
+name: Healthcare Agent CI/CD
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.13.5"
 
       - name: Install Dependencies
         run: |
@@ -44,32 +44,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    if: github.ref == 'refs/heads/main'
+
     steps:
 
-      - name: Connect To Tailscale
-        uses: tailscale/github-action@v4
-        with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-
-      - name: Setup SSH Key
+      - name: Trigger Render Deployment
         run: |
-          mkdir -p ~/.ssh
-
-          cat << 'EOF' > ~/.ssh/github_cd
-          ${{ secrets.WINDOWS_SSH_PRIVATE_KEY }}
-          EOF
-
-          chmod 600 ~/.ssh/github_cd
-
-          echo "===== KEY CHECK ====="
-          ssh-keygen -lf ~/.ssh/github_cd
-
-      - name: Deploy To Windows Server
-        run: |
-          ssh -vvv \
-          -o BatchMode=yes \
-          -o IdentitiesOnly=yes \
-          -o StrictHostKeyChecking=no \
-          -i ~/.ssh/github_cd \
-          ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-          "powershell -ExecutionPolicy Bypass -File 'E:\Projects\Deployment\medical-bot-with-cicd\deploy.ps1'"
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
